@@ -1,4 +1,11 @@
-$frequencyChanges = Get-Content ..\input\day1.txt
+param(
+    [Parameter(
+        Mandatory = $true,
+        Position  = 0
+    )]
+    [Int[]]
+    $FrequencyChanges
+) # end param
 
 # part 1
 $currentFrequency = 0
@@ -9,24 +16,12 @@ foreach( $frequencyChange in $frequencyChanges )
 Write-Host "Frequency sum: $currentFrequency"
 
 # part 2
-$foundFrequencies = New-Object -TypeName System.Collections.Hashtable
-
+$foundFrequencies = [System.Collections.Generic.HashSet[int]]::new()
+[void]$foundFrequencies.Add(0)
 $currentFrequency = 0
-$duplicateFrequencyFound = $false
 $frequencyIndex = 0
 
-while( -not $duplicateFrequencyFound )
-{
-    $currentFrequency += $frequencyChanges[($frequencyIndex % $frequencyChanges.Count)]
-
-    if( $foundFrequencies.ContainsKey($currentFrequency) )
-    {
-        # dupe found!
-        $duplicateFrequencyFound = $true
-        Write-Host "First duplicate frequency: $currentFrequency"
-    } else
-    {
-        $foundFrequencies.Add($currentFrequency, 0)
-    }
-    $frequencyIndex++
-}
+do {
+    $currentFrequency += $frequencyChanges[($frequencyIndex++ % $frequencyChanges.Count)] -as [int]
+} while( $foundFrequencies.Add($currentFrequency) )
+Write-Host "First duplicate frequency: $currentFrequency"
